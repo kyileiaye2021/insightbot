@@ -119,8 +119,8 @@ export default function Home() {
           <Typography style={{ color: '#0099ff', fontSize: '1.5rem' }}><b>Chat with your database</b></Typography>
           <Stack
             direction="column"
-            width="500px"
-            height="700px"
+            width="100%"
+            height="100%"
             p={2}
             spacing={3}
           >
