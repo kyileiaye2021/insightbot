@@ -10,15 +10,13 @@ The system aims to support traditional education by offering on-demand, personal
 
 ## Key Features
 - PDF and image processing
+- ...
 
 ## Technologies Used
 - Groq
 - Pinecone
 - RAG
-
-## Installation
-1. Clone the repository
-2. ...
+- ...
 
 ## Usage
 After installation, students can:
@@ -29,20 +27,6 @@ After installation, students can:
 5. Complete practice exercises
 6. View progress reports
 
-## Project Structure
-```
-insightbot/
-|
-|—— src/
-|   |—— app/
-|       |—— api/
-|           |—— chat/
-|       |—— dashboard/
-|       |—— fonts/
-|   README.md
-|   setup_rag.py
-|
-```
 
 ## Contact
 For questions or feedback, contanct name@email.com
