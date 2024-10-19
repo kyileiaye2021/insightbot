@@ -99,7 +99,7 @@ export default function Home() {
       </Button>
       <Typography>{uploadMessage}</Typography> {/* Display upload status */}
 
-      <input type="file" onChange={handleFileChange} /> {/**allow users to select the PDF file for uploading */}
+      <input type="file" onChange={handleFileChange} name='file'/> {/**allow users to select the PDF file for uploading */}
 
       {/* Columns Layout */}
       <Stack direction="row" spacing={4} width="100%" height="80%">

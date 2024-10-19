@@ -62,6 +62,7 @@ def upload_file():
         
         # Extract text from the PDF file
         file_text = extract_text_from_pdf(file)
+    
         
         # Generate embeddin for the extracted text
         embedding = create_embedding(file_text)
