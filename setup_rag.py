@@ -49,30 +49,33 @@ def extract_text_from_pdf(pdf_file):
 # Route to handle file uploaad and embedding creation
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+        
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        
+        # check if the uploaded file is a PDF
+        if not filename.endswith('.pdf'):
+            return jsonify({"error": "Only PDF files are allowed"}), 400
+        
+        # Extract text from the PDF file
+        file_text = extract_text_from_pdf(file)
+        
+        # Generate embeddin for the extracted text
+        embedding = create_embedding(file_text)
+        
+        # Store the embedding in Pinecone
+        index.upsert(vectors=[
+            {'id': filename, "values":embedding, "metadata": {"filename": filename, "text": file_text}}
+        ])
+        
+        return jsonify({'message': f'File {filename} uploaded and embedding stored in Pinecone'}), 200
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
-    
-    file = request.files['file']
-    filename = secure_filename(file.filename)
-    
-    # check if the uploaded file is a PDF
-    if not filename.endswith('.pdf'):
-        return jsonify({"error": "Only PDF files are allowed"}), 400
-    
-    # Extract text from the PDF file
-    file_text = extract_text_from_pdf(file)
-    
-    # Generate embeddin for the extracted text
-    embedding = create_embedding(file_text)
-    
-    # Store the embedding in Pinecone
-    index.upsert(vectors=[
-        {'id': filename, "values":embedding, "metadata": {"filename": filename, "text": file_text}}
-    ])
-    
-    return jsonify({'message': f'File {filename} uploaded and embedding stored in Pinecone'}), 200
-
 # for handling user queries
 @app.route('/chat', methods=['POST'])
 def chat():
