@@ -1,15 +1,43 @@
 'use client'
 import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
+import axios from 'axios'
 
 export default function Home() {
+  const [file, setFile] = useState(null) // State to store selected file
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: `Hi! I'm the Rate My Professor support assistant. How can I help you today?`,
+      content: `Hi! How can I help you today?`,
     },
   ])
   const [message, setMessage] = useState('')
+  const [uploadMessage, setUploadMessage] = useState('') // State for showing upload status
+
+  // Functioin to handle file selection
+  //This function is triggered when a user selects a file
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0])
+  }
+
+  //function to handle file upload
+  //This function is triggered when the user clicks the Upload Files button. 
+  const handleUpload = async () => {
+    if (!file) {
+      setUploadMessage('Please select a file to upload')
+      return
+    }
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/upload', formData);
+      setUploadMessage(response.data.message);  // Show success message
+    } catch (error) {
+      setUploadMessage('Error uploading file');  // Show error message
+      console.error('File upload error:', error);
+    }
+  }
 
   const sendMessage = async () => {
     setMessage('')
@@ -19,12 +47,12 @@ export default function Home() {
       {role: 'assistant', content: ''},
     ])
   
-    const response = fetch('/api/chat', {
+    const response = fetch('http://127.0.0.1:5000/chat', { //// Point to Flask backend
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify([...messages, {role: 'user', content: message}]),
+      body: JSON.stringify({ question: message }), // send only the user message
     }).then(async (res) => {
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
@@ -34,6 +62,7 @@ export default function Home() {
         if (done) {
           return result
         }
+
         const text = decoder.decode(value || new Uint8Array(), {stream: true})
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1]
@@ -66,13 +95,16 @@ export default function Home() {
       p={2}
     >
       {/* Top Button */}
-      <Button variant="contained" sx={{ mb: 3 }}>
-        Upload Files
+
+      <input type="file" onChange={handleFileChange} /> {/**allow users to select the PDF file for uploading */}
+      <Button variant="contained" sx={{ mb: 3 }} onClick={handleUpload} >
+        enter
       </Button>
+      <Typography>{uploadMessage}</Typography> {/* Display upload status */}
 
       {/* Columns Layout */}
       <Stack direction="row" spacing={4} width="100%" height="80%">
-        {/* Left Column: Chatbot */}
+        {/* Chatbot UI */}
         <Box
       width="100vw"
       height="100vh"
