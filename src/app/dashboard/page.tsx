@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Stack, TextField, Typography, Paper, IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import { Box, Button, Stack, TextField, Typography, Paper, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, AppBar, Toolbar } from '@mui/material'
 import { useState } from 'react'
 import axios from 'axios'
 import SendIcon from '@mui/icons-material/Send'
@@ -20,6 +20,8 @@ export default function Home() {
   const [openDialog, setOpenDialog] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState('')
   const [goalAdvice, setGoalAdvice] = useState('')
+  const [todos, setTodos] = useState([])
+  const [newTodo, setNewTodo] = useState('')
 
   // Functioin to handle file selection
   //This function is triggered when a user selects a file
@@ -114,6 +116,19 @@ export default function Home() {
     }
   }
 
+  const addTodo = () => {
+    if (newTodo.trim()) {
+      setTodos([...todos, { text: newTodo.trim(), done: false }])
+      setNewTodo('')
+    }
+  }
+
+  const toggleTodo = (index) => {
+    const newTodos = [...todos]
+    newTodos[index].done = !newTodos[index].done
+    setTodos(newTodos)
+  }
+
   return (
     <Box
       width="100vw"
@@ -122,8 +137,15 @@ export default function Home() {
       flexDirection="column"
       justifyContent="flex-start"
       alignItems="center"
-      p={2}
     >
+      <AppBar position="static" sx={{ bgcolor: '#004d80' }}>
+        <Toolbar>
+          <Typography variant="h4" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
+            INSIGHTBOT - AI Student Assistant
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
       {/* Upload Button */}
       <Stack width="100vw" p={2} alignItems="center" style={{
         backgroundColor: '#004d80',
@@ -147,7 +169,7 @@ export default function Home() {
           alignItems="center"
           style={{ border: '4px solid #004d80', borderRadius: '5px', backgroundColor: 'rgba(0, 77, 128, 0.3)' }}
         >
-          <Typography style={{ color: '#0099ff', fontSize: '1.5rem' }}><b>Chat with your database</b></Typography>
+          <Typography style={{ color: '#0099ff', fontSize: '1.5rem' }}><b>Chat with your notes!</b></Typography>
           <Stack
             direction="column"
             width="100%"
@@ -265,12 +287,37 @@ export default function Home() {
             style={{ border: '4px solid #7a0099', borderRadius: '5px', backgroundColor: 'rgba(122, 0, 153, 0.3)' }}
           >
             <Typography style={{ color: '#b800e6', fontSize: '1.5rem' }}><b>To-do List</b></Typography>
-            <Stack direction="column" spacing={2} flexGrow={1} overflow="auto" alignItems="left" justifyContent="left">
-              <Typography style={{ color: 'white' }}>Task 1</Typography>
-              <Typography style={{ color: 'white' }}>Task 2</Typography>
-              <Typography style={{ color: 'white' }}>Task 3</Typography>
-              <Typography style={{ color: 'white' }}>Task 4</Typography>
-              <Typography style={{ color: 'white' }}>Task 5</Typography>
+            <Stack direction="row" spacing={2} width="90%" mt={2}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Enter a new todo..."
+                value={newTodo}
+                onChange={(e) => setNewTodo(e.target.value)}
+                sx={{ input: { color: 'white' } }}
+              />
+              <IconButton onClick={addTodo} sx={{ color: 'white' }}>
+                <AddIcon />
+              </IconButton>
+            </Stack>
+            <Stack direction="column" spacing={1} width="90%" mt={2} overflow="auto">
+              {todos.map((todo, index) => (
+                <Button
+                  key={index}
+                  fullWidth
+                  variant="outlined"
+                  sx={{ 
+                    justifyContent: 'flex-start', 
+                    color: 'white', 
+                    borderColor: 'white',
+                    textDecoration: todo.done ? 'line-through' : 'none'
+                  }}
+                  onClick={() => toggleTodo(index)}
+                  startIcon={<Checkbox checked={todo.done} sx={{ color: 'white' }} />}
+                >
+                  {todo.text}
+                </Button>
+              ))}
             </Stack>
           </Box>
         </Stack>
