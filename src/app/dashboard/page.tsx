@@ -155,7 +155,7 @@ export default function Home() {
           <input type="file" accept=".pdf" onChange={handleFileChange} name='file' style={{ border: '2px dashed #0099ff', borderRadius: '5px', padding: '5px' }} />
           <Button variant="contained" onClick={handleUpload}>Upload</Button>
         </Stack>
-        <Typography style={{ color: '#ff3333' }}><b>{uploadMessage}</b></Typography>
+        <Typography style={{ color: '#99d6ff' }}><b>{uploadMessage}</b></Typography>
       </Stack>
 
       {/* Columns Layout */}
@@ -213,17 +213,17 @@ export default function Home() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 sx={{
-                  input: { color: 'white' }, // Text color
-                  label: { color: 'white' }, // Label color
+                  input: { color: 'white' },
+                  label: { color: 'white' },
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
-                      borderColor: 'white', // Default border color
+                      borderColor: 'white',
                     },
                     '&:hover fieldset': {
-                      borderColor: 'white', // Hovered border color
+                      borderColor: 'white',
                     },
                     '&.Mui-focused fieldset': {
-                      borderColor: 'white', // Focused border color
+                      borderColor: 'white',
                     },
                   },
                 }}
@@ -253,7 +253,21 @@ export default function Home() {
                 placeholder="Enter a new goal..."
                 value={newGoal}
                 onChange={(e) => setNewGoal(e.target.value)}
-                sx={{ input: { color: 'white' } }}
+                sx={{
+                  input: { color: 'white' },
+                  label: { color: 'white' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'white',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'white',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'white',
+                    },
+                  },
+                }}
               />
               <IconButton onClick={addGoal} sx={{ color: 'white' }}>
                 <AddIcon />
@@ -294,7 +308,21 @@ export default function Home() {
                 placeholder="Enter a new todo..."
                 value={newTodo}
                 onChange={(e) => setNewTodo(e.target.value)}
-                sx={{ input: { color: 'white' } }}
+                sx={{
+                  input: { color: 'white' },
+                  label: { color: 'white' },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'white',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'white',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'white',
+                    },
+                  },
+                }}
               />
               <IconButton onClick={addTodo} sx={{ color: 'white' }}>
                 <AddIcon />
@@ -324,11 +352,8 @@ export default function Home() {
       </Stack>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Goal Advice</DialogTitle>
+        <DialogTitle><b>Goal Advice:</b> {selectedGoal}</DialogTitle>
         <DialogContent>
-          <Typography variant="subtitle1" gutterBottom>
-            Goal: {selectedGoal}
-          </Typography>
           <Typography variant="body1">
             {goalAdvice}
           </Typography>
