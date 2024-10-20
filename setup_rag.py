@@ -159,7 +159,7 @@ def goal_advise():
         model='gpt-4o-mini',
         messages=[
             {"role": "system", "content": "You are a helpful assistant specializing in goal-setting and personal development."},
-            {"role": "user", "content": f"Context: {context}\nGoal Statement: {goal_statement}\n Check and confirm whether the goal is SMART. Please provide advice on this goal."}
+            {"role": "user", "content": f"Context: {context}\nGoal Statement: {goal_statement}\n Check and confirm whether the goal is SMART. Please provide advice on this goal. Be short and concise."}
         ],
         max_tokens=200
     )
