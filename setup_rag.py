@@ -127,7 +127,7 @@ def chat():
     # generate a response using OpenAI
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     response = client.chat.completions.create(
-        model='gpt-3.5-turbo',
+        model='gpt-4o-mini',
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": f"Context: {context}\nQuestion: {user_question}"}
@@ -156,7 +156,7 @@ def goal_advise():
     # Generate a response using OpenAI
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     response = client.chat.completions.create(
-        model='gpt-3.5-turbo',
+        model='gpt-4o-mini',
         messages=[
             {"role": "system", "content": "You are a helpful assistant specializing in goal-setting and personal development."},
             {"role": "user", "content": f"Context: {context}\nGoal Statement: {goal_statement}\n Check and confirm whether the goal is SMART. Please provide advice on this goal."}
