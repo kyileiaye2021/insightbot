@@ -6,6 +6,7 @@ import os
 from pinecone import Pinecone, ServerlessSpec
 import openai
 import PyPDF2
+import tiktoken
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
@@ -32,8 +33,23 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Func to create embeddings
 def create_embedding(text):
-    response = openai.Embedding.create(input=text, model='text-embedding-ada-002')
-    return response['data'][0]['embedding']
+    response = openai.embeddings.create(input=text, model='text-embedding-3-small')
+    return response.data[0].embedding
+
+# def create_embedding(text):
+#     response = openai.Embedding.create(input=text, model='text-embedding-ada-002')
+#     return response['data'][0]['embedding']
+
+# func to split text into chunks
+def split_text(text, max_tokens=800):
+    tokenizer = tiktoken.get_encoding('p50k_base') # This encoding is suitable for GPT-3.5 models
+    tokens = tokenizer.encode(text)
+    
+    chunks = []
+    for i in range(0, len(tokens), max_tokens):
+        chunk = tokens[i:i+max_tokens]
+        chunks.append(tokenizer.decode(chunk))
+    return chunks
 
 # func to extract text from a PDF
 def extract_text_from_pdf(pdf_file):
@@ -63,14 +79,24 @@ def upload_file():
         # Extract text from the PDF file
         file_text = extract_text_from_pdf(file)
     
+        # Split text into smaller chunks
+        chunks = split_text(file_text)
         
         # Generate embeddin for the extracted text
-        embedding = create_embedding(file_text)
+        #embedding = create_embedding(chunks)
+        
+        # generate embeddings for each chunk
+        embeddings = []
+        for chunk in chunks:
+            embedding = create_embedding(chunk)
+            embeddings.append({
+                "id": f"{filename}_chunk_{chunks.index(chunk)}",
+                "values": embedding,
+                "metadata": {"filename": filename, 'text':chunk}
+            })
         
         # Store the embedding in Pinecone
-        index.upsert(vectors=[
-            {'id': filename, "values":embedding, "metadata": {"filename": filename, "text": file_text}}
-        ])
+        index.upsert(vectors=embeddings)
         
         return jsonify({'message': f'File {filename} uploaded and embedding stored in Pinecone'}), 200
     except Exception as e:
