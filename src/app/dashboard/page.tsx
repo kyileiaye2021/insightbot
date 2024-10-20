@@ -20,6 +20,7 @@ export default function Home() {
   const [openDialog, setOpenDialog] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState('')
   const [goalAdvice, setGoalAdvice] = useState('')
+  const [generatedTasks, setGeneratedTasks] = useState('')
   const [todos, setTodos] = useState([])
   const [newTodo, setNewTodo] = useState('')
 
@@ -127,6 +128,37 @@ export default function Home() {
     const newTodos = [...todos]
     newTodos[index].done = !newTodos[index].done
     setTodos(newTodos)
+  }
+
+  const createTasksGoal = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/generatetodotask', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ goal: selectedGoal }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      if (data.generated.tasks && Array.isArray(data.generated.tasks)) {
+        for (let i = 0; i < data.generated.tasks.length; i++) {
+            setTodos((prevTodos) => [...prevTodos, { text: data.generated.tasks[i], done: false }])
+        }
+        setOpenDialog(false)
+      } else {
+        console.log(data.generated);
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      setGeneratedTasks('An error occurred while creating tasks.')
+      setOpenDialog(false)
+    }
   }
 
   return (
@@ -334,9 +366,9 @@ export default function Home() {
                   key={index}
                   fullWidth
                   variant="outlined"
-                  sx={{ 
-                    justifyContent: 'flex-start', 
-                    color: 'white', 
+                  sx={{
+                    justifyContent: 'flex-start',
+                    color: 'white',
                     borderColor: 'white',
                     textDecoration: todo.done ? 'line-through' : 'none'
                   }}
@@ -359,6 +391,7 @@ export default function Home() {
           </Typography>
         </DialogContent>
         <DialogActions>
+          <Button onClick={createTasksGoal}>Generate tasks</Button>
           <Button onClick={() => setOpenDialog(false)}>Close</Button>
         </DialogActions>
       </Dialog>

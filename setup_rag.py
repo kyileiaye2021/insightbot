@@ -7,6 +7,7 @@ from pinecone import Pinecone, ServerlessSpec
 import openai
 import PyPDF2
 import tiktoken
+import json
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
@@ -165,6 +166,36 @@ def goal_advise():
     )
     
     return jsonify({"advice": response.choices[0].message.content}), 200
+
+# generate todo tasks based on goal
+@app.route('/generatetodotask', methods=['POST'])
+def generate_todo_auto():
+    generate_basedon_goal = request.json.get('goal')
+    if not generate_basedon_goal:
+        return jsonify({"error": "Invalid goal"}), 400
+    
+    # Sample context (you can edit this later)
+    context = """
+    Based on this goal create a to-do list of minimum 2, maximum 5 tasks that will help the user achieve this goal."
+    """
+    
+    # Generate a response using OpenAI
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that will generate and organize tasks based on a SMART goal."},
+            {"role": "user", "content": f"Context: {context}\nGoal: {generate_basedon_goal}\n Be very short and concise. Return a json object with the tasks with no additional texts before or after the curly brackets."}
+        ],
+        max_tokens=100
+    )
+
+    try:
+        tasks = json.loads(response.choices[0].message.content)
+    except json.JSONDecodeError:
+        tasks = {"error": "There was an error"}
+    
+    return jsonify({"generated": tasks}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
