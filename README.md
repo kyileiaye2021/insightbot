@@ -1,32 +1,21 @@
 # Insightbot
-An intelligent study tool powered by artificial intelligent to provide a personalized learning experience
-
 ## Project Description
-This AI personal tutor uses natural language processing and machine learning to:
-- Interpret PDF uploads
-- Create todo lists for studying
-- Communicate with the user with an AI chatbot
-The system aims to support traditional education by offering on-demand, personalized learning assistance available around the clock.
+An intelligent study tool powered by Retrieval-Augmented Generation (RAG) that delivers a personalized learning experience, helping users achieve their goals. Offering on-demand, personalized learning assistance 24/7, it empowers users to stay organized, achieve their goals, and receive tailored support to overcome learning challenges, ensuring continuous progress at any time.
 
 ## Key Features
-- PDF and image processing
-- ...
+This AI personal web app combines:
+- To-do list
+- Goal Tracker
+- AI-powered RAG chatbot
 
 ## Technologies Used
-- Groq
-- Pinecone
-- RAG
-- ...
+- Python
+- NextJS
+- PINECONE
+- TYPESCRIPT
+- OPEN AI API
 
 ## Usage
-After installation, students can:
-1. Create an account and login
-2. Select subjects to study
-3. Upload relevant PDF and image files
-4. Engage in tutoring conversations
-5. Complete practice exercises
-6. View progress reports
 
-
-## Contact
-For questions or feedback, contanct name@email.com
+## Future Directions
+We plan to enhance Insightbot by supporting more diverse types of data uploads, including videos and links, allowing users to interact with a broader range of content. We’re also exploring how to refine the chatbot’s natural language processing capabilities to handle more complex queries and improve user experience.
