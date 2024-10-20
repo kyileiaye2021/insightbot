@@ -1,7 +1,9 @@
 'use client'
-import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Stack, TextField, Typography, Paper, IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import { useState } from 'react'
 import axios from 'axios'
+import SendIcon from '@mui/icons-material/Send'
+import AddIcon from '@mui/icons-material/Add'
 
 export default function Home() {
   const [file, setFile] = useState(null) // State to store selected file
@@ -13,6 +15,11 @@ export default function Home() {
   ])
   const [message, setMessage] = useState('')
   const [uploadMessage, setUploadMessage] = useState('') // State for showing upload status
+  const [goals, setGoals] = useState([])
+  const [newGoal, setNewGoal] = useState('')
+  const [openDialog, setOpenDialog] = useState(false)
+  const [selectedGoal, setSelectedGoal] = useState('')
+  const [goalAdvice, setGoalAdvice] = useState('')
 
   // Functioin to handle file selection
   //This function is triggered when a user selects a file
@@ -76,12 +83,36 @@ export default function Home() {
     })
   }
 
-  /*const addTodo = () => {
-    if (todo.trim()) {
-      setTodos([...todos, todo])
-      setTodo('')
+  const addGoal = () => {
+    if (newGoal.trim()) {
+      setGoals([...goals, newGoal.trim()])
+      setNewGoal('')
     }
-  }*/
+  }
+
+  const getGoalAdvice = async (goal) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/goaladvise', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ goal: goal }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      setGoalAdvice(data.advice)
+      setOpenDialog(true)
+    } catch (error) {
+      console.error('Error:', error)
+      setGoalAdvice('An error occurred while fetching goal advice.')
+      setOpenDialog(true)
+    }
+  }
 
   return (
     <Box
@@ -183,23 +214,44 @@ export default function Home() {
         </Box>
 
         <Stack direction="column" spacing={2} width="60vw" p={2} alignItems="center">
-
           <Box
             width="100%"
             height="44vh"
             display="flex"
             flexDirection="column"
-            justifyContent="center"
+            justifyContent="flex-start"
             alignItems="center"
             style={{ border: '4px solid #cc5200', borderRadius: '5px', backgroundColor: 'rgba(204, 82, 0, 0.3)' }}
           >
             <Typography style={{ color: '#ff6600', fontSize: '1.5rem' }}><b>Your goals</b></Typography>
-            <Stack direction="column" spacing={2} flexGrow={1} overflow="auto" alignItems="left" justifyContent="left">
-              <Typography style={{ color: 'white' }}>Goal 1</Typography>
-              <Typography style={{ color: 'white' }}>Goal 2</Typography>
-              <Typography style={{ color: 'white' }}>Goal 3</Typography>
-              <Typography style={{ color: 'white' }}>Goal 4</Typography>
-              <Typography style={{ color: 'white' }}>Goal 5</Typography>
+            <Stack direction="row" spacing={2} width="90%" mt={2}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Enter a new goal..."
+                value={newGoal}
+                onChange={(e) => setNewGoal(e.target.value)}
+                sx={{ input: { color: 'white' } }}
+              />
+              <IconButton onClick={addGoal} sx={{ color: 'white' }}>
+                <AddIcon />
+              </IconButton>
+            </Stack>
+            <Stack direction="column" spacing={1} width="90%" mt={2} overflow="auto">
+              {goals.map((goal, index) => (
+                <Button
+                  key={index}
+                  fullWidth
+                  variant="outlined"
+                  sx={{ justifyContent: 'flex-start', color: 'white', borderColor: 'white' }}
+                  onClick={() => {
+                    setSelectedGoal(goal)
+                    getGoalAdvice(goal)
+                  }}
+                >
+                  {goal}
+                </Button>
+              ))}
             </Stack>
           </Box>
 
@@ -221,9 +273,23 @@ export default function Home() {
               <Typography style={{ color: 'white' }}>Task 5</Typography>
             </Stack>
           </Box>
-
         </Stack>
       </Stack>
-    </Box >
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Goal Advice</DialogTitle>
+        <DialogContent>
+          <Typography variant="subtitle1" gutterBottom>
+            Goal: {selectedGoal}
+          </Typography>
+          <Typography variant="body1">
+            {goalAdvice}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   )
 }
