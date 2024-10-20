@@ -137,5 +137,34 @@ def chat():
     
     return jsonify({"answer": response.choices[0].message.content}), 200
 
+# new route
+@app.route('/goaladvise', methods=['POST'])
+def goal_advise():
+    goal_statement = request.json.get('goal')
+    if not goal_statement:
+        return jsonify({"error": "No goal statement provided"}), 400
+    
+    # Sample context (you can edit this later)
+    context = """
+    Effective goal-setting involves creating SMART goals: Specific, Measurable, Achievable, Relevant, and Time-bound.
+    Consider breaking larger goals into smaller, manageable tasks.
+    Regular review and adjustment of goals is important for long-term success.
+    ONLY provide advice on the goal if it is an ACADEMIC goal, related to Education, Career, or Personal Development.
+    If it is not, please respond with "I am sorry, I can only provide advice on academic goals."
+    """
+    
+    # Generate a response using OpenAI
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model='gpt-3.5-turbo',
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant specializing in goal-setting and personal development."},
+            {"role": "user", "content": f"Context: {context}\nGoal Statement: {goal_statement}\n Check and confirm whether the goal is SMART. Please provide advice on this goal."}
+        ],
+        max_tokens=200
+    )
+    
+    return jsonify({"advice": response.choices[0].message.content}), 200
+
 if __name__ == "__main__":
     app.run(debug=True)
