@@ -1,6 +1,10 @@
 # Insightbot
+
 ## Project Description
 An intelligent study tool powered by Retrieval-Augmented Generation (RAG) that delivers a personalized learning experience, helping users achieve their goals. Offering on-demand, personalized learning assistance 24/7, it empowers users to stay organized, achieve their goals, and receive tailored support to overcome learning challenges, ensuring continuous progress at any time.
+
+![Home Page](./readme_img/home.png) 
+![Main Page](./readme_img/main.png) 
 
 ## Key Features
 This AI personal web app combines:
