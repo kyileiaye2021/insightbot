@@ -15,6 +15,7 @@ Jinja2==3.1.4
 jiter==0.6.1
 MarkupSafe==3.0.2
 openai==1.52.0
+numpy==1.26.4
 pinecone-client==5.0.1
 pinecone-plugin-inference==1.1.0
 pinecone-plugin-interface==0.0.7
@@ -26,3 +27,4 @@ tqdm==4.66.5
 typing_extensions==4.12.2
 urllib3==2.2.3
 Werkzeug==3.0.4
+tiktoken==0.5.0

@@ -33,7 +33,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Func to create embeddings
 def create_embedding(text):
-    response = openai.embeddings.create(input=text, model='text-embedding-3-small')
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    response = client.embeddings.create(input=text, model='text-embedding-3-small')
     return response.data[0].embedding
 
 # def create_embedding(text):
@@ -123,8 +124,9 @@ def chat():
     # Construct a context from the most relevant matches
     context = "\n".join([match['metadata']['text'] for match in query_response['matches']])
     
-    # generate a response using Openai
-    response = openai.ChatCompletion.create(
+    # generate a response using OpenAI
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
         model='gpt-3.5-turbo',
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
@@ -133,7 +135,7 @@ def chat():
         max_tokens=150
     )
     
-    return  jsonify({"answer": response['choices'][0]['message']['content']}), 200
+    return jsonify({"answer": response.choices[0].message.content}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
